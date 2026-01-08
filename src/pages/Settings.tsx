@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useHabitStore } from '../stores'
+import { useState } from 'react'
 import { exportData, importData, clearAllData } from '../utils/storage'
 import { useNotifications } from '../hooks/useNotifications'
-import Card from './Card'
-import Button from './Button'
+import Card from '../components/Card'
+import Button from '../components/Button'
 import InstallPrompt from '../components/InstallPrompt'
 
 export default function Settings() {
-  const habits = useHabitStore((state) => state.habits)
   const { permission, isSupported, requestPermission } = useNotifications()
   const [importError, setImportError] = useState<string | null>(null)
   const [importSuccess, setImportSuccess] = useState(false)

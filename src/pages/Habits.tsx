@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useHabitStore } from '../stores'
-import { Habit, CreateHabitInput, CadenceType, WeeklyCadence, DurationUnit, Priority } from '../types'
+import { Habit, CadenceType, WeeklyCadence, DurationUnit, Priority } from '../types'
 import HabitForm from '../components/HabitForm'
 import HabitList from '../components/HabitList'
 import Button from '../components/Button'
@@ -41,12 +41,7 @@ export default function Habits() {
       setEditingHabit(undefined)
     } else {
       // Create new habit
-      const input: CreateHabitInput = {
-        ...data,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-      createHabit(input)
+      createHabit(data)
     }
     setShowForm(false)
   }

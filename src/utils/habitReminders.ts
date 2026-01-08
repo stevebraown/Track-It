@@ -1,5 +1,5 @@
 import { Habit } from '../types'
-import { getTodayISO, parseDateISO, formatDateISO } from './date'
+import { getTodayISO } from './date'
 import { isHabitDueOnDate } from './habit'
 import { scheduleNotification, cancelNotification } from './notifications'
 
@@ -68,7 +68,6 @@ export async function cancelHabitReminder(habit: Habit): Promise<void> {
 export async function checkAndSendReminders(habits: Habit[]): Promise<void> {
   const today = getTodayISO()
   const now = new Date()
-  const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
 
   for (const habit of habits) {
     if (!habit.reminderTime) continue

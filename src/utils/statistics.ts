@@ -1,6 +1,6 @@
 import { Habit, HabitEntry } from '../types'
 import { isHabitDueOnDate, getHabitEndDate } from './habit'
-import { parseDateISO, formatDateISO, addDays, getDateRange } from './date'
+import { parseDateISO, formatDateISO, getDateRange } from './date'
 
 /**
  * Calculate the current streak for a habit
