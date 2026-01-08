@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: theme('colors.background.light');
+    --bg-surface: theme('colors.surface.light');
+    --text-primary: theme('colors.text.primary.light');
+    --text-secondary: theme('colors.text.secondary.light');
+    --border-color: theme('colors.border.light');
+  }
+
+  .dark {
+    --bg-primary: theme('colors.background.dark');
+    --bg-surface: theme('colors.surface.dark');
+    --text-primary: theme('colors.text.primary.dark');
+    --text-secondary: theme('colors.text.secondary.dark');
+    --border-color: theme('colors.border.dark');
+  }
+
+  body {
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* iOS safe area support */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* Ensure full height on iOS */
+  html, body, #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  /* Ensure input elements have visible text */
+  input[type="number"],
+  input[type="text"],
+  input[type="time"],
+  textarea,
+  select {
+    color: var(--text-primary) !important;
+  }
+}
+
+@layer components {
+  /* Reusable component styles will go here */
+}

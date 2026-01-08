@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Icons</title>
+</head>
+<body>
+  <h1>Icon Generator</h1>
+  <p>Open this file in a browser and click the buttons to generate icons.</p>
+  
+  <canvas id="canvas192" width="192" height="192" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+  <canvas id="canvas512" width="512" height="512" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+  
+  <br>
+  <button onclick="generateIcon(192)">Generate 192x192</button>
+  <button onclick="generateIcon(512)">Generate 512x512</button>
+  
+  <script>
+    function generateIcon(size) {
+      const canvas = document.getElementById(`canvas${size}`)
+      const ctx = canvas.getContext('2d')
+      
+      // Background
+      const gradient = ctx.createLinearGradient(0, 0, size, size)
+      gradient.addColorStop(0, '#3b82f6')
+      gradient.addColorStop(1, '#2563eb')
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, size, size)
+      
+      // Rounded corners
+      ctx.globalCompositeOperation = 'destination-in'
+      ctx.beginPath()
+      const radius = size * 0.125
+      ctx.roundRect(0, 0, size, size, radius)
+      ctx.fill()
+      
+      ctx.globalCompositeOperation = 'source-over'
+      
+      // Draw checkmark/circle design
+      ctx.strokeStyle = 'white'
+      ctx.fillStyle = 'white'
+      ctx.lineWidth = size * 0.08
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      
+      // Outer circle
+      const center = size / 2
+      const radiusOuter = size * 0.35
+      ctx.beginPath()
+      ctx.arc(center, center, radiusOuter, 0, Math.PI * 2)
+      ctx.stroke()
+      
+      // Checkmark
+      const checkSize = size * 0.2
+      ctx.beginPath()
+      ctx.moveTo(center - checkSize * 0.5, center)
+      ctx.lineTo(center - checkSize * 0.1, center + checkSize * 0.4)
+      ctx.lineTo(center + checkSize * 0.5, center - checkSize * 0.2)
+      ctx.stroke()
+      
+      // Download
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `icon-${size}.png`
+        a.click()
+        URL.revokeObjectURL(url)
+      })
+    }
+    
+    // Generate on load
+    window.onload = () => {
+      generateIcon(192)
+      setTimeout(() => generateIcon(512), 500)
+    }
+  </script>
+</body>
+</html>
