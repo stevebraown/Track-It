@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { initializeStores } from './stores'
 import Layout from './components/Layout'
+import PageTransition from './components/PageTransition'
 import ReminderChecker from './components/ReminderChecker'
 import Today from './pages/Today'
 import Habits from './pages/Habits'
@@ -20,12 +21,14 @@ function App() {
       <BrowserRouter>
         <Layout>
           <ReminderChecker />
-          <Routes>
-            <Route path="/" element={<Today />} />
-            <Route path="/habits" element={<Habits />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
+          <PageTransition>
+            <Routes>
+              <Route path="/" element={<Today />} />
+              <Route path="/habits" element={<Habits />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </PageTransition>
         </Layout>
       </BrowserRouter>
     </ThemeProvider>

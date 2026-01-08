@@ -89,11 +89,11 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
 
   return (
     <Card className="mb-6">
-      <h3 className="text-h3 mb-4">{habit ? 'Edit Habit' : 'Create New Habit'}</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <h3 className="text-h3 font-semibold mb-6">{habit ? 'Edit Habit' : 'Create New Habit'}</h3>
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-small font-medium mb-2 text-[var(--text-primary)]">
+          <label htmlFor="name" className="block text-small font-semibold mb-2 text-[var(--text-primary)]">
             Habit Name *
           </label>
           <input
@@ -101,7 +101,7 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             placeholder="e.g., Exercise, Read, Meditate"
           />
           {errors.name && <p className="text-small text-destructive mt-1">{errors.name}</p>}
@@ -109,7 +109,7 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
 
         {/* Cadence */}
         <div>
-          <label className="block text-small font-medium mb-2 text-[var(--text-primary)]">
+          <label className="block text-small font-semibold mb-2 text-[var(--text-primary)]">
             Frequency *
           </label>
           <div className="flex gap-4">
@@ -140,7 +140,7 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
           {/* Weekly days selector */}
           {cadence === 'weekly' && (
             <div className="mt-3">
-              <label className="block text-small font-medium mb-2 text-[var(--text-primary)]">
+              <label className="block text-small font-semibold mb-2 text-[var(--text-primary)]">
                 Select Days *
               </label>
               <div className="flex flex-wrap gap-2">
@@ -177,13 +177,13 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
               min="1"
               value={durationValue}
               onChange={(e) => setDurationValue(parseInt(e.target.value) || 0)}
-              className="w-24 px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-24 px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               style={{ color: 'var(--text-primary)' }}
             />
             <select
               value={durationUnit}
               onChange={(e) => setDurationUnit(e.target.value as DurationUnit)}
-              className="px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             >
               <option value="days">Days</option>
               <option value="weeks">Weeks</option>
@@ -203,7 +203,7 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value as Priority)}
-            className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -221,7 +221,7 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
             type="time"
             value={reminderTime}
             onChange={(e) => setReminderTime(e.target.value)}
-            className="px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
           />
           {errors.reminderTime && (
             <p className="text-small text-destructive mt-1">{errors.reminderTime}</p>
@@ -241,18 +241,27 @@ export default function HabitForm({ habit, onSubmit, onCancel }: HabitFormProps)
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none"
             placeholder="Add any notes about this habit..."
           />
         </div>
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
-          <Button type="submit" variant="primary" className="w-full sm:w-auto">
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full sm:w-auto animate-scale-in"
+          >
             {habit ? 'Update Habit' : 'Create Habit'}
           </Button>
           {onCancel && (
-            <Button type="button" variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onCancel}
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
           )}

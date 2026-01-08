@@ -2,6 +2,7 @@ import { Habit, Priority, DayOfWeek } from '../types'
 import Card from './Card'
 import Button from './Button'
 import EmptyState from './EmptyState'
+import { Target } from 'lucide-react'
 
 interface HabitListProps {
   habits: Habit[]
@@ -59,7 +60,7 @@ export default function HabitList({ habits, onEdit, onDelete }: HabitListProps) 
   if (habits.length === 0) {
     return (
       <EmptyState
-        icon="🎯"
+        icon={<Target className="w-12 h-12 text-[var(--text-secondary)] mx-auto" />}
         title="No habits yet"
         description="Create your first habit to start tracking your progress and building better routines."
       />
@@ -68,12 +69,17 @@ export default function HabitList({ habits, onEdit, onDelete }: HabitListProps) 
 
   return (
     <div className="space-y-4">
-      {habits.map((habit) => (
-        <Card key={habit.id} className="hover:shadow-lg transition-shadow">
+      {habits.map((habit, index) => (
+        <div
+          key={habit.id}
+          className="animate-fade-in"
+          style={{ animationDelay: `${index * 30}ms` }}
+        >
+          <Card className="hover:shadow-lg transition-all duration-200">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex-1 w-full">
-              <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h4 className="text-h3">{habit.name}</h4>
+              <div className="flex flex-wrap items-center gap-3 mb-3">
+                <h4 className="text-h3 font-semibold">{habit.name}</h4>
                 <span
                   className={`px-2 py-1 rounded-4 text-small text-white ${PRIORITY_COLORS[habit.priority]}`}
                 >
@@ -117,6 +123,7 @@ export default function HabitList({ habits, onEdit, onDelete }: HabitListProps) 
             </div>
           </div>
         </Card>
+        </div>
       ))}
     </div>
   )

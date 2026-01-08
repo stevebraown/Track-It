@@ -1,6 +1,7 @@
-import { useState, ReactNode } from 'react'
+import React, { useState, ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../contexts/ThemeContext'
+import { Calendar, CheckSquare, BarChart3, Settings, Moon, Sun, Menu, X } from 'lucide-react'
 
 interface LayoutProps {
   children: ReactNode
@@ -12,10 +13,10 @@ export default function Layout({ children }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navItems = [
-    { path: '/', label: 'Today', icon: '📅' },
-    { path: '/habits', label: 'Habits', icon: '✅' },
-    { path: '/history', label: 'History', icon: '📊' },
-    { path: '/settings', label: 'Settings', icon: '⚙️' },
+    { path: '/', label: 'Today', icon: Calendar },
+    { path: '/habits', label: 'Habits', icon: CheckSquare },
+    { path: '/history', label: 'History', icon: BarChart3 },
+    { path: '/settings', label: 'Settings', icon: Settings },
   ]
 
   return (
@@ -24,7 +25,7 @@ export default function Layout({ children }: LayoutProps) {
       <nav className="bg-[var(--bg-surface)] border-b border-[var(--border-color)] sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-h2 font-semibold">Track It</h1>
+            <h1 className="text-h2 font-bold">Track It</h1>
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
@@ -33,10 +34,10 @@ export default function Layout({ children }: LayoutProps) {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`px-3 py-2 rounded-4 text-small transition-colors ${
+                    className={`px-3 py-2 rounded-4 text-small font-medium transition-all duration-150 ${
                       location.pathname === item.path
-                        ? 'bg-primary text-white'
-                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                        ? 'bg-primary text-white shadow-sm scale-105'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] active:scale-95'
                     }`}
                   >
                     {item.label}
@@ -48,7 +49,11 @@ export default function Layout({ children }: LayoutProps) {
                 className="p-2 rounded-4 hover:bg-[var(--bg-primary)] transition-colors"
                 aria-label="Toggle theme"
               >
-                {theme === 'light' ? '🌙' : '☀️'}
+                {theme === 'light' ? (
+                  <Moon className="w-5 h-5 text-[var(--text-primary)]" />
+                ) : (
+                  <Sun className="w-5 h-5 text-[var(--text-primary)]" />
+                )}
               </button>
             </div>
 
@@ -59,14 +64,22 @@ export default function Layout({ children }: LayoutProps) {
                 className="p-2 rounded-4 hover:bg-[var(--bg-primary)] transition-colors"
                 aria-label="Toggle theme"
               >
-                {theme === 'light' ? '🌙' : '☀️'}
+                {theme === 'light' ? (
+                  <Moon className="w-5 h-5 text-[var(--text-primary)]" />
+                ) : (
+                  <Sun className="w-5 h-5 text-[var(--text-primary)]" />
+                )}
               </button>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-4 hover:bg-[var(--bg-primary)] transition-colors"
                 aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? '✕' : '☰'}
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5 text-[var(--text-primary)]" />
+                ) : (
+                  <Menu className="w-5 h-5 text-[var(--text-primary)]" />
+                )}
               </button>
             </div>
           </div>
@@ -80,13 +93,15 @@ export default function Layout({ children }: LayoutProps) {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`px-4 py-3 rounded-8 text-body transition-colors flex items-center gap-3 ${
+                    className={`px-4 py-3 rounded-8 text-body transition-all duration-150 flex items-center gap-3 ${
                       location.pathname === item.path
-                        ? 'bg-primary text-white'
-                        : 'text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'text-[var(--text-primary)] hover:bg-[var(--bg-primary)] active:scale-95'
                     }`}
                   >
-                    <span>{item.icon}</span>
+                    {React.createElement(item.icon, {
+                      className: `w-5 h-5 ${location.pathname === item.path ? 'text-white' : 'text-[var(--text-primary)]'}`,
+                    })}
                     <span>{item.label}</span>
                   </Link>
                 ))}
@@ -97,7 +112,7 @@ export default function Layout({ children }: LayoutProps) {
       </nav>
 
       {/* Main content */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         {children}
       </main>
     </div>

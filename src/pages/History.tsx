@@ -21,11 +21,14 @@ import {
 } from '../utils/date'
 import StatsCard from '../components/StatsCard'
 import StreakBadge from '../components/StreakBadge'
+import StreakLeaderboard from '../components/StreakLeaderboard'
 import HistoryDayCard from '../components/HistoryDayCard'
+import CompletionChart from '../components/CompletionChart'
 import Card from '../components/Card'
 import LoadingSpinner from '../components/LoadingSpinner'
 import EmptyState from '../components/EmptyState'
 import Button from '../components/Button'
+import { BarChart3, CheckSquare, TrendingUp, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react'
 
 type ViewMode = 'daily' | 'weekly' | 'monthly'
 
@@ -125,8 +128,8 @@ export default function History() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner size="large" />
+      <div className="flex items-center justify-center min-h-[400px] animate-fade-in">
+        <LoadingSpinner size="large" text="Loading history..." />
       </div>
     )
   }
@@ -134,9 +137,9 @@ export default function History() {
   if (habits.length === 0) {
     return (
       <div>
-        <h2 className="text-h1 mb-6">History</h2>
+        <h2 className="text-h1 font-bold mb-8">History</h2>
         <EmptyState
-          icon="📊"
+          icon={<BarChart3 className="w-12 h-12 text-[var(--text-secondary)] mx-auto" />}
           title="No history yet"
           description="Create some habits and start tracking to see your progress history and statistics."
         />
@@ -147,33 +150,41 @@ export default function History() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-h1 mb-4">History & Insights</h2>
+      <div className="mb-8">
+        <div className="mb-6">
+          <h2 className="text-h1 font-bold mb-2">History & Insights</h2>
+          <p className="text-body text-[var(--text-secondary)]">
+            Track your progress, streaks, and completion rates over time
+          </p>
+        </div>
 
         {/* View Mode Selector */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-6">
           <Button
             variant={viewMode === 'daily' ? 'primary' : 'ghost'}
             onClick={() => setViewMode('daily')}
+            className="font-medium"
           >
             Daily
           </Button>
           <Button
             variant={viewMode === 'weekly' ? 'primary' : 'ghost'}
             onClick={() => setViewMode('weekly')}
+            className="font-medium"
           >
             Weekly
           </Button>
           <Button
             variant={viewMode === 'monthly' ? 'primary' : 'ghost'}
             onClick={() => setViewMode('monthly')}
+            className="font-medium"
           >
             Monthly
           </Button>
         </div>
 
         {/* Date Navigation */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-6">
           <Button variant="ghost" onClick={() => navigateDate('prev')}>
             ← Previous
           </Button>
@@ -208,72 +219,62 @@ export default function History() {
 
       {/* Overall Statistics */}
       {overallStats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in">
           <StatsCard
             title="Total Habits"
             value={overallStats.totalHabits}
             subtitle="Active habits"
+            icon={<CheckSquare className="w-5 h-5" />}
           />
           <StatsCard
             title="Completion Rate"
             value={`${overallStats.averageCompletionRate}%`}
             subtitle={`${overallStats.totalCompleted} of ${overallStats.totalDueDates} completed`}
+            showProgress={true}
+            progressValue={overallStats.averageCompletionRate}
+            icon={<BarChart3 className="w-5 h-5" />}
           />
           <StatsCard
             title="Completed"
             value={overallStats.totalCompleted}
             subtitle="Habits checked off"
+            trend="up"
+            icon={<CheckCircle2 className="w-5 h-5" />}
           />
           <StatsCard
             title="Missed"
             value={overallStats.totalMissed}
             subtitle="Habits not completed"
             trend={overallStats.totalMissed > 0 ? 'down' : 'neutral'}
+            icon={<AlertTriangle className="w-5 h-5" />}
           />
         </div>
       )}
 
-      {/* Top Streaks */}
-      {overallStats && overallStats.habitsWithStreaks.length > 0 && (
-        <Card className="mb-6">
-          <h3 className="text-h3 mb-4">Top Streaks</h3>
-          <div className="space-y-3">
-            {overallStats.habitsWithStreaks
-              .filter((h) => h.currentStreak > 0)
-              .sort((a, b) => b.currentStreak - a.currentStreak)
-              .slice(0, 5)
-              .map(({ habit, currentStreak, longestStreak }) => (
-                <div
-                  key={habit.id}
-                  className="flex items-center justify-between p-3 bg-[var(--bg-primary)] rounded-8 cursor-pointer hover:bg-[var(--bg-surface)] transition-colors"
-                  onClick={() =>
-                    setSelectedHabitId(
-                      selectedHabitId === habit.id ? null : habit.id
-                    )
-                  }
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-body font-medium">{habit.name}</span>
-                    <StreakBadge
-                      currentStreak={currentStreak}
-                      longestStreak={longestStreak}
-                      size="small"
-                    />
-                  </div>
-                  {selectedHabitId === habit.id && (
-                    <span className="text-small text-primary">▼</span>
-                  )}
-                </div>
-              ))}
-          </div>
-        </Card>
+      {/* Top Streaks - Enhanced */}
+      {overallStats && (
+        <div className="mb-8">
+          <StreakLeaderboard
+            habits={overallStats.habitsWithStreaks}
+            onHabitClick={(habitId) =>
+              setSelectedHabitId(
+                selectedHabitId === habitId ? null : habitId
+              )
+            }
+          />
+        </div>
       )}
 
       {/* Selected Habit Details */}
       {selectedHabitStats && (
-        <Card className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-h3">{selectedHabitStats.habit.name}</h3>
+        <Card className="mb-8 border-2 border-primary shadow-md">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-h2 font-bold">{selectedHabitStats.habit.name}</h3>
+              <p className="text-small text-[var(--text-secondary)] mt-1">
+                Detailed statistics for selected period
+              </p>
+            </div>
             <Button
               variant="ghost"
               onClick={() => setSelectedHabitId(null)}
@@ -286,25 +287,38 @@ export default function History() {
               title="Completion Rate"
               value={`${selectedHabitStats.stats.completionRate}%`}
               subtitle={`${selectedHabitStats.stats.completed} of ${selectedHabitStats.stats.totalDue} completed`}
+              showProgress={true}
+              progressValue={selectedHabitStats.stats.completionRate}
+              icon={<TrendingUp className="w-5 h-5" />}
             />
-            <div className="flex items-center">
+            <Card className="flex items-center justify-center">
               <StreakBadge
                 currentStreak={selectedHabitStats.currentStreak}
                 longestStreak={selectedHabitStats.longestStreak}
-                size="medium"
+                size="large"
               />
-            </div>
+            </Card>
             <StatsCard
               title="Completed"
               value={selectedHabitStats.stats.completed}
+              icon={<CheckCircle2 className="w-5 h-5" />}
+              trend="up"
             />
             <StatsCard
               title="Missed"
               value={selectedHabitStats.stats.missed}
               trend={selectedHabitStats.stats.missed > 0 ? 'down' : 'neutral'}
+              icon={<AlertTriangle className="w-5 h-5" />}
             />
           </div>
         </Card>
+      )}
+
+      {/* Completion Chart - for weekly/monthly views */}
+      {dailyBreakdown.length > 1 && (
+        <div className="mb-6">
+          <CompletionChart dailyBreakdown={dailyBreakdown} />
+        </div>
       )}
 
       {/* Daily Breakdown */}
@@ -318,17 +332,22 @@ export default function History() {
         </h3>
         <div className="space-y-4">
           {dailyBreakdown.length > 0 ? (
-            dailyBreakdown.map((day) => (
-              <HistoryDayCard
+            dailyBreakdown.map((day, index) => (
+              <div
                 key={day.date}
-                date={day.date}
-                habits={habits}
-                entries={entries}
-              />
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 30}ms` }}
+              >
+                <HistoryDayCard
+                  date={day.date}
+                  habits={habits}
+                  entries={entries}
+                />
+              </div>
             ))
           ) : (
             <EmptyState
-              icon="📅"
+              icon={<Calendar className="w-12 h-12 text-[var(--text-secondary)] mx-auto" />}
               title="No data for this period"
               description="No habits were due during this time period."
             />

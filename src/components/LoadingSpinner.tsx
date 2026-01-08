@@ -1,9 +1,14 @@
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large'
   className?: string
+  text?: string
 }
 
-export default function LoadingSpinner({ size = 'medium', className = '' }: LoadingSpinnerProps) {
+export default function LoadingSpinner({
+  size = 'medium',
+  className = '',
+  text,
+}: LoadingSpinnerProps) {
   const sizeClasses = {
     small: 'w-4 h-4',
     medium: 'w-8 h-8',
@@ -11,7 +16,7 @@ export default function LoadingSpinner({ size = 'medium', className = '' }: Load
   }
 
   return (
-    <div className={`flex items-center justify-center ${className}`}>
+    <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <div
         className={`${sizeClasses[size]} border-4 border-[var(--border-color)] border-t-primary rounded-full animate-spin`}
         role="status"
@@ -19,6 +24,11 @@ export default function LoadingSpinner({ size = 'medium', className = '' }: Load
       >
         <span className="sr-only">Loading...</span>
       </div>
+      {text && (
+        <p className="text-small text-[var(--text-secondary)] animate-pulse">
+          {text}
+        </p>
+      )}
     </div>
   )
 }

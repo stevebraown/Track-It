@@ -8,8 +8,10 @@ import Card from '../components/Card'
 import LoadingSpinner from '../components/LoadingSpinner'
 import EmptyState from '../components/EmptyState'
 import InstallPrompt from '../components/InstallPrompt'
+import ProgressRing from '../components/ProgressRing'
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
+import { Sparkles, PartyPopper } from 'lucide-react'
 
 export default function Today() {
   const today = getTodayISO()
@@ -87,8 +89,8 @@ export default function Today() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner size="large" />
+      <div className="flex items-center justify-center min-h-[400px] animate-fade-in">
+        <LoadingSpinner size="large" text="Loading your habits..." />
       </div>
     )
   }
@@ -99,39 +101,51 @@ export default function Today() {
       <InstallPrompt />
 
       {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-h1 mb-2">Today</h2>
-        <p className="text-body text-[var(--text-secondary)]">{formatToday()}</p>
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-h1 font-bold mb-1">Today</h2>
+            <p className="text-small text-[var(--text-secondary)]">{formatToday()}</p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Card */}
       {habitsDueToday.length > 0 && (
-        <Card className="mb-6 bg-[var(--bg-surface)]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-small text-[var(--text-secondary)] mb-1">Today's Progress</p>
-              <p className="text-h2">
-                {completionStats.completed} of {completionStats.total} habits completed
+        <Card className="mb-8 bg-gradient-to-br from-[var(--bg-surface)] to-[var(--bg-primary)] border-2 border-[var(--border-color)] shadow-md animate-scale-in">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
+            <div className="flex-1 text-center sm:text-left">
+              <p className="text-small text-[var(--text-secondary)] mb-2 font-medium uppercase tracking-wide">
+                Today's Progress
               </p>
-            </div>
-            <div className="flex items-center gap-4 w-full sm:w-auto">
-              <div className="text-h1 font-semibold">{completionStats.percentage}%</div>
-              <div className="flex-1 sm:w-24 h-2 bg-[var(--bg-primary)] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-success transition-all duration-300"
-                  style={{ width: `${completionStats.percentage}%` }}
-                />
+              <p className="text-h2 font-bold mb-1">
+                {completionStats.completed} of {completionStats.total}
+              </p>
+              <div className="flex items-center gap-2 text-body text-[var(--text-secondary)]">
+                {completionStats.total === completionStats.completed ? (
+                  <>
+                    <PartyPopper className="w-5 h-5 text-success" />
+                    <span>All done!</span>
+                  </>
+                ) : completionStats.completed === 0 ? (
+                  <span>Let's get started!</span>
+                ) : (
+                  <span>Keep going!</span>
+                )}
               </div>
+            </div>
+            <div className="flex-shrink-0">
+              <ProgressRing percentage={completionStats.percentage} size={100} />
             </div>
           </div>
         </Card>
       )}
 
       {/* Habits List */}
-      <div className="mb-6">
+      <div className="mb-8">
         {habitsDueToday.length === 0 ? (
           <EmptyState
-            icon="✨"
+            icon={<Sparkles className="w-12 h-12 text-[var(--text-secondary)] mx-auto" />}
             title="No habits due today"
             description={
               habits.length === 0
@@ -147,14 +161,20 @@ export default function Today() {
             }
           />
         ) : (
-          <div className="space-y-3">
-            {habitsDueToday.map((habit) => (
-              <TodayHabitItem
+          <div className="space-y-4">
+            {habitsDueToday.map((habit, index) => (
+              <div
                 key={habit.id}
-                habit={habit}
-                completed={getCompletionStatus(habit.id)}
-                onToggle={handleToggleHabit}
-              />
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <TodayHabitItem
+                  habit={habit}
+                  completed={getCompletionStatus(habit.id)}
+                  entries={entries}
+                  onToggle={handleToggleHabit}
+                />
+              </div>
             ))}
           </div>
         )}

@@ -76,14 +76,14 @@ export default function Settings() {
 
   return (
     <div>
-      <h2 className="text-h1 mb-6">Settings</h2>
+      <h2 className="text-h1 font-bold mb-8">Settings</h2>
 
       {/* Install Prompt */}
       <InstallPrompt />
 
       {/* Notifications */}
       <Card className="mb-6">
-        <h3 className="text-h3 mb-4">Notifications</h3>
+        <h3 className="text-h3 font-semibold mb-4">Notifications</h3>
         {!isSupported ? (
           <p className="text-body text-[var(--text-secondary)]">
             Notifications are not supported in this browser.
@@ -134,7 +134,7 @@ export default function Settings() {
 
       {/* Data Management */}
       <Card className="mb-6">
-        <h3 className="text-h3 mb-4">Data Management</h3>
+        <h3 className="text-h3 font-semibold mb-4">Data Management</h3>
         <div className="space-y-4">
           {/* Export */}
           <div>
@@ -190,7 +190,7 @@ export default function Settings() {
 
       {/* App Info */}
       <Card>
-        <h3 className="text-h3 mb-4">About</h3>
+        <h3 className="text-h3 font-semibold mb-4">About</h3>
         <div className="space-y-2 text-small text-[var(--text-secondary)]">
           <p>
             <strong>Track It</strong> - A simple, beautiful habit tracker

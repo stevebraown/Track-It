@@ -62,16 +62,16 @@ export default function Habits() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner size="large" />
+      <div className="flex items-center justify-center min-h-[400px] animate-fade-in">
+        <LoadingSpinner size="large" text="Loading habits..." />
       </div>
     )
   }
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <h2 className="text-h1">Habits</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <h2 className="text-h1 font-bold">Habits</h2>
         {!showForm && (
           <Button variant="primary" onClick={() => setShowForm(true)}>
             + New Habit
