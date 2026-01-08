@@ -2,6 +2,12 @@
 
 A beautiful, client-side-only habit tracker Progressive Web App built with TypeScript, React, and modern web technologies.
 
+## 🌐 Live App
+
+**Try it now:** [https://track-it-omega-jet.vercel.app/](https://track-it-omega-jet.vercel.app/)
+
+Install on your iPhone: Open the link in Safari → Share → "Add to Home Screen"
+
 ## ✨ Features
 
 - ✅ **Habit Management** - Create, edit, and delete habits with custom cadences
@@ -93,6 +99,7 @@ public/
 - **React Router** for routing
 - **Zustand** for state management
 - **Tailwind CSS** with custom design tokens
+- **Lucide React** for icons
 - **localStorage** for data persistence
 - **Service Worker** for offline support
 
@@ -111,7 +118,7 @@ public/
 - ✅ **Phase 1** - MVP Core (habits, tracking, reflections)
 - ✅ **Phase 2** - History & Insights (streaks, statistics)
 - ✅ **Phase 3** - PWA Features (install, offline, notifications)
-- 🔜 **Phase 4** - Design Polish (optional)
+- ✅ **Phase 4** - Design Polish (UI refinements, Lucide React icons)
 - 🔜 **Phase 5** - Android APK Packaging (optional)
 
 ## 📝 Notes
