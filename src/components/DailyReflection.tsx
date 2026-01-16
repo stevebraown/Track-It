@@ -44,16 +44,20 @@ export default function DailyReflection({ date, initialText, onSave }: DailyRefl
         rows={6}
         className="w-full px-3 py-2 rounded-8 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none"
       />
-      <div className="flex items-center justify-between mt-2">
-        <p className="text-small text-[var(--text-secondary)]">
-          Auto-saves when you click away. Press Ctrl/Cmd + Enter to save.
-        </p>
+      <div className="flex items-center justify-end gap-3 mt-3">
         {isSaving && (
           <span className="text-small text-success font-medium animate-fade-in flex items-center gap-1">
             <Check className="w-4 h-4" />
             Saved
           </span>
         )}
+        <button
+          type="button"
+          onClick={handleSave}
+          className="px-4 py-2 rounded-full text-small font-medium text-[var(--text-primary)] bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all"
+        >
+          Save
+        </button>
       </div>
     </Card>
   )
