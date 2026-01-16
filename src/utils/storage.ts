@@ -123,6 +123,7 @@ export const habitStorage = {
     const now = new Date().toISOString()
     
     const newHabit: Habit = {
+      ...input,
       category: input.category ?? DEFAULT_CATEGORY,
       status: input.status ?? 'active',
       targetFrequency:
@@ -134,7 +135,6 @@ export const habitStorage = {
           : undefined),
       targetDuration: input.targetDuration ?? undefined,
       icon: input.icon ?? undefined,
-      ...input,
       id: generateHabitId(),
       createdAt: now,
       updatedAt: now,

@@ -8,6 +8,10 @@ interface HabitFormProps {
   habit?: Habit // If provided, we're editing; otherwise, creating
   onSubmit: (data: {
     name: string
+    category: HabitCategory
+    status: HabitStatus
+    targetFrequency?: number
+    targetDuration?: number
     cadence: CadenceType
     cadenceConfig: WeeklyCadence
     duration: { value: number; unit: DurationUnit }
