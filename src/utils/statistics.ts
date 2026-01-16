@@ -1,6 +1,6 @@
-import { Habit, HabitEntry } from '../types'
+import { Habit, HabitEntry, HabitCategory } from '../types'
 import { isHabitDueOnDate, getHabitEndDate } from './habit'
-import { parseDateISO, formatDateISO, getDateRange } from './date'
+import { parseDateISO, formatDateISO, getDateRange, getStartOfWeek, addDays } from './date'
 
 /**
  * Calculate the current streak for a habit
@@ -224,4 +224,221 @@ export function getDailyBreakdown(
       completionRate,
     }
   })
+}
+
+export interface CategorySummary {
+  category: HabitCategory
+  completed: number
+  total: number
+  completionRate: number
+}
+
+export function getCategorySummaries(
+  habits: Habit[],
+  entries: HabitEntry[],
+  startDate: Date | string,
+  endDate: Date | string
+): CategorySummary[] {
+  const dates = getDateRange(startDate, endDate)
+  const summaries = new Map<HabitCategory, { completed: number; total: number }>()
+
+  for (const habit of habits) {
+    if (!summaries.has(habit.category)) {
+      summaries.set(habit.category, { completed: 0, total: 0 })
+    }
+  }
+
+  for (const dateStr of dates) {
+    for (const habit of habits) {
+      if (!isHabitDueOnDate(habit, dateStr)) continue
+      const record = summaries.get(habit.category)
+      if (!record) continue
+      record.total += 1
+      const entry = entries.find(
+        (e) => e.habitId === habit.id && e.date === dateStr
+      )
+      if (entry?.completed) {
+        record.completed += 1
+      }
+    }
+  }
+
+  return Array.from(summaries.entries()).map(([category, value]) => ({
+    category,
+    completed: value.completed,
+    total: value.total,
+    completionRate: value.total > 0 ? Math.round((value.completed / value.total) * 100) : 0,
+  }))
+}
+
+export interface WeeklyCategoryDataPoint {
+  date: string
+  label: string
+  totalCompleted: number
+  totalDue: number
+  categories: Record<HabitCategory, number>
+}
+
+export function getWeeklyCategoryCompletion(
+  habits: Habit[],
+  entries: HabitEntry[],
+  referenceDate: Date | string = new Date()
+): WeeklyCategoryDataPoint[] {
+  const start = getStartOfWeek(referenceDate)
+  const days = Array.from({ length: 7 }, (_, index) => addDays(start, index))
+
+  return days.map((day) => {
+    const dateStr = formatDateISO(day)
+    const categoryCounts: Record<HabitCategory, number> = {} as Record<HabitCategory, number>
+    let totalCompleted = 0
+    let totalDue = 0
+
+    for (const habit of habits) {
+      if (!isHabitDueOnDate(habit, dateStr)) continue
+      totalDue += 1
+      if (!categoryCounts[habit.category]) {
+        categoryCounts[habit.category] = 0
+      }
+      const entry = entries.find(
+        (e) => e.habitId === habit.id && e.date === dateStr
+      )
+      if (entry?.completed) {
+        categoryCounts[habit.category] += 1
+        totalCompleted += 1
+      }
+    }
+
+    return {
+      date: dateStr,
+      label: day.toLocaleDateString(undefined, { weekday: 'short' }),
+      totalCompleted,
+      totalDue,
+      categories: categoryCounts,
+    }
+  })
+}
+
+export interface HabitWeeklyProgress {
+  habit: Habit
+  completionRate: number
+  completed: number
+  total: number
+}
+
+export function getHabitWeeklyProgress(
+  habits: Habit[],
+  entries: HabitEntry[],
+  referenceDate: Date | string = new Date()
+): HabitWeeklyProgress[] {
+  const start = getStartOfWeek(referenceDate)
+  const end = addDays(start, 6)
+
+  return habits.map((habit) => {
+    const stats = getHabitStats(habit, entries, start, end)
+    return {
+      habit,
+      completionRate: stats.completionRate,
+      completed: stats.completed,
+      total: stats.totalDue,
+    }
+  })
+}
+
+export interface CompletionTrendPoint {
+  date: string
+  completionRate: number
+}
+
+export function getCompletionTrend(
+  habits: Habit[],
+  entries: HabitEntry[],
+  days: number
+): CompletionTrendPoint[] {
+  const end = new Date()
+  const start = addDays(end, -Math.max(days - 1, 0))
+  const breakdown = getDailyBreakdown(habits, entries, start, end)
+
+  return breakdown.map((day) => ({
+    date: day.date,
+    completionRate: day.completionRate,
+  }))
+}
+
+export function calculateMovingAverage(
+  points: CompletionTrendPoint[],
+  windowSize: number
+): CompletionTrendPoint[] {
+  return points.map((point, index) => {
+    const start = Math.max(0, index - windowSize + 1)
+    const slice = points.slice(start, index + 1)
+    const average =
+      slice.reduce((sum, item) => sum + item.completionRate, 0) / slice.length
+    return {
+      date: point.date,
+      completionRate: Math.round(average),
+    }
+  })
+}
+
+export interface DayOfWeekSummary {
+  day: string
+  completionRate: number
+}
+
+export function getBestDayOfWeek(
+  habits: Habit[],
+  entries: HabitEntry[]
+): DayOfWeekSummary[] {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const dayTotals = days.map(() => ({ total: 0, completed: 0 }))
+
+  const allDates = entries.map((entry) => entry.date)
+  const uniqueDates = Array.from(new Set(allDates))
+
+  uniqueDates.forEach((dateStr) => {
+    const date = parseDateISO(dateStr)
+    const dayIndex = date.getDay()
+    let totalDue = 0
+    let completed = 0
+    habits.forEach((habit) => {
+      if (isHabitDueOnDate(habit, dateStr)) {
+        totalDue += 1
+        const entry = entries.find(
+          (e) => e.habitId === habit.id && e.date === dateStr
+        )
+        if (entry?.completed) {
+          completed += 1
+        }
+      }
+    })
+    dayTotals[dayIndex].total += totalDue
+    dayTotals[dayIndex].completed += completed
+  })
+
+  return days.map((day, index) => ({
+    day,
+    completionRate:
+      dayTotals[index].total > 0
+        ? Math.round((dayTotals[index].completed / dayTotals[index].total) * 100)
+        : 0,
+  }))
+}
+
+export interface TimeOfDayBucket {
+  hour: number
+  count: number
+}
+
+export function getTimeOfDayDistribution(entries: HabitEntry[]): TimeOfDayBucket[] {
+  const buckets = Array.from({ length: 24 }, (_, hour) => ({ hour, count: 0 }))
+
+  entries.forEach((entry) => {
+    if (!entry.timestamp || !entry.completed) return
+    const date = new Date(entry.timestamp)
+    if (Number.isNaN(date.getTime())) return
+    const hour = date.getHours()
+    buckets[hour].count += 1
+  })
+
+  return buckets
 }

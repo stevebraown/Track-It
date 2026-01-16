@@ -4,6 +4,28 @@
 export type Priority = 'low' | 'medium' | 'high'
 
 /**
+ * Habit Categories
+ */
+export type HabitCategory =
+  | 'health'
+  | 'fitness'
+  | 'learning'
+  | 'productivity'
+  | 'social'
+  | 'mindfulness'
+  | 'creativity'
+  | 'finance'
+  | 'sleep'
+  | 'nutrition'
+  | 'reading'
+  | 'hobby'
+
+/**
+ * Habit Status
+ */
+export type HabitStatus = 'active' | 'paused' | 'archived'
+
+/**
  * Habit Cadence Types
  * - daily: Every day
  * - weekly: Specific days of the week
@@ -47,6 +69,11 @@ export type CadenceConfig = WeeklyCadence | CustomCadence
 export interface Habit {
   id: string // Unique identifier (UUID or timestamp-based)
   name: string // Habit name
+  category: HabitCategory
+  status: HabitStatus
+  targetFrequency?: number // times per week
+  targetDuration?: number // minutes per session
+  icon?: string
   cadence: CadenceType // Type of cadence
   cadenceConfig: CadenceConfig // Configuration for the cadence
   duration: {
@@ -68,6 +95,9 @@ export interface HabitEntry {
   date: string // ISO date string (YYYY-MM-DD format)
   completed: boolean // Whether the habit was completed
   notes?: string // Optional: Notes for this specific entry
+  duration?: number // Optional: minutes spent
+  mood?: 'great' | 'good' | 'okay' | 'difficult'
+  timestamp?: string // Optional: ISO timestamp
 }
 
 /**

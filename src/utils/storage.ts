@@ -1,4 +1,4 @@
-import { AppData, Habit, HabitEntry, DailyReflection, CreateHabitInput, UpdateHabitInput } from '../types'
+import { AppData, Habit, HabitEntry, DailyReflection, CreateHabitInput, UpdateHabitInput, HabitCategory } from '../types'
 import { generateHabitId } from './habit'
 import { getTodayISO } from './date'
 
@@ -14,6 +14,27 @@ const STORAGE_KEYS = {
  * Increment this when making breaking changes to the data structure
  */
 const DATA_VERSION = '1.0.0'
+
+const DEFAULT_CATEGORY: HabitCategory = 'productivity'
+
+function normalizeHabits(habits: Habit[]): Habit[] {
+  return habits.map((habit) => {
+    const weeklyDays =
+      habit.cadence === 'weekly' && 'days' in habit.cadenceConfig
+        ? habit.cadenceConfig.days.length
+        : undefined
+
+    return {
+      ...habit,
+      category: habit.category ?? DEFAULT_CATEGORY,
+      status: habit.status ?? 'active',
+      targetFrequency:
+        habit.targetFrequency ?? (habit.cadence === 'daily' ? 7 : weeklyDays),
+      targetDuration: habit.targetDuration ?? undefined,
+      icon: habit.icon ?? undefined,
+    }
+  })
+}
 
 /**
  * Default/empty app data structure
@@ -47,7 +68,7 @@ export function loadAppData(): AppData {
 
     // Ensure all required fields exist
     return {
-      habits: data.habits || [],
+      habits: normalizeHabits(data.habits || []),
       entries: data.entries || [],
       reflections: data.reflections || [],
       version: data.version || DATA_VERSION,
@@ -102,6 +123,17 @@ export const habitStorage = {
     const now = new Date().toISOString()
     
     const newHabit: Habit = {
+      category: input.category ?? DEFAULT_CATEGORY,
+      status: input.status ?? 'active',
+      targetFrequency:
+        input.targetFrequency ??
+        (input.cadence === 'daily'
+          ? 7
+          : 'days' in input.cadenceConfig
+          ? input.cadenceConfig.days.length
+          : undefined),
+      targetDuration: input.targetDuration ?? undefined,
+      icon: input.icon ?? undefined,
       ...input,
       id: generateHabitId(),
       createdAt: now,
@@ -197,6 +229,7 @@ export const entryStorage = {
       date,
       completed,
       notes,
+      timestamp: completed ? new Date().toISOString() : undefined,
     }
 
     if (existingIndex >= 0) {

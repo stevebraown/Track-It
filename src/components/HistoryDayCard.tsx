@@ -39,17 +39,17 @@ export default function HistoryDayCard({
 
   return (
     <Card
-      className={`transition-all hover:shadow-md ${
+      className={`transition-all hover:shadow-[var(--card-shadow-hover)] ${
         isToday
-          ? 'border-2 border-primary bg-gradient-to-br from-primary-light to-transparent'
+          ? 'border border-[var(--accent)] bg-[var(--accent-soft)]'
           : ''
       }`}
     >
-      <div className="flex items-start justify-between mb-5">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-5">
         <div>
           <h3 className="text-h3 font-semibold">{formattedDate}</h3>
           {isToday && (
-            <span className="inline-block mt-1 px-2 py-0.5 bg-primary text-white rounded-4 text-small font-medium">
+            <span className="inline-block mt-2 px-3 py-1 bg-[var(--accent-gradient)] text-white rounded-full text-small font-medium">
               Today
             </span>
           )}
@@ -62,7 +62,7 @@ export default function HistoryDayCard({
             </p>
           </div>
           {habitsDue.length > 0 && (
-            <ProgressRing percentage={completionRate} size={60} strokeWidth={5} />
+            <ProgressRing percentage={completionRate} size={80} strokeWidth={6} />
           )}
         </div>
       </div>
@@ -78,14 +78,14 @@ export default function HistoryDayCard({
             return (
               <div
                 key={habit.id}
-                className={`flex items-center gap-3 p-2.5 rounded-8 transition-all ${
+                className={`flex items-center gap-3 p-3 rounded-12 transition-all ${
                   completed
                     ? 'bg-success-light border border-success'
-                    : 'bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-primary'
+                    : 'bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-[var(--accent)]'
                 }`}
               >
                 <div
-                  className={`w-5 h-5 rounded-4 flex items-center justify-center flex-shrink-0 ${
+                  className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                     completed
                       ? 'bg-success'
                       : 'border-2 border-[var(--border-color)]'

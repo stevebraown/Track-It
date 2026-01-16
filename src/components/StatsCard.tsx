@@ -23,7 +23,7 @@ export default function StatsCard({
   icon,
 }: StatsCardProps) {
   return (
-    <Card className={`hover:shadow-lg transition-shadow ${className}`}>
+    <Card className={`hover:shadow-[var(--card-shadow-hover)] transition-shadow ${className}`}>
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-3">
           <p className="text-small text-[var(--text-secondary)] font-medium uppercase tracking-wide">
@@ -32,7 +32,7 @@ export default function StatsCard({
           {icon && <div className="text-[var(--text-secondary)]">{icon}</div>}
         </div>
         <div className="flex items-baseline gap-2 mb-2">
-          <p className="text-h1 font-bold">{value}</p>
+          <p className="text-display font-bold">{value}</p>
           {trend && (
             <span
               className={`text-small font-semibold ${
@@ -54,7 +54,7 @@ export default function StatsCard({
           <div className="mt-2">
             <div className="w-full h-2 bg-[var(--bg-primary)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-success transition-all duration-500 ease-out"
+                className="h-full bg-[var(--accent)] transition-all duration-500 ease-out"
                 style={{ width: `${progressValue}%` }}
               />
             </div>

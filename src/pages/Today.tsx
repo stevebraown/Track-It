@@ -12,6 +12,8 @@ import ProgressRing from '../components/ProgressRing'
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import { Sparkles, PartyPopper } from 'lucide-react'
+import WeeklyCompletionChart from '../components/WeeklyCompletionChart'
+import ProgressRingGrid from '../components/ProgressRingGrid'
 
 export default function Today() {
   const today = getTodayISO()
@@ -101,44 +103,58 @@ export default function Today() {
       <InstallPrompt />
 
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-h1 font-bold mb-1">Today</h2>
-            <p className="text-small text-[var(--text-secondary)]">{formatToday()}</p>
-          </div>
-        </div>
+      <div className="mb-6">
+        <p className="text-small text-[var(--text-secondary)] uppercase tracking-[0.2em]">
+          Focus Summary
+        </p>
+        <h2 className="text-h1 font-bold mb-1">{formatToday()}</h2>
+        <p className="text-body text-[var(--text-secondary)]">
+          Keep your momentum with a clear snapshot of today's progress.
+        </p>
       </div>
 
       {/* Stats Card */}
       {habitsDueToday.length > 0 && (
-        <Card className="mb-8 bg-gradient-to-br from-[var(--bg-surface)] to-[var(--bg-primary)] border-2 border-[var(--border-color)] shadow-md animate-scale-in">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
-            <div className="flex-1 text-center sm:text-left">
-              <p className="text-small text-[var(--text-secondary)] mb-2 font-medium uppercase tracking-wide">
-                Today's Progress
+        <Card className="mb-8 bg-[var(--bg-surface)] border border-[var(--border-color)] animate-scale-in">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="flex-1 text-center lg:text-left">
+              <p className="text-small text-[var(--text-secondary)] mb-3 font-medium uppercase tracking-[0.2em]">
+                Today's Focus
               </p>
-              <p className="text-h2 font-bold mb-1">
-                {completionStats.completed} of {completionStats.total}
+              <p className="text-display font-bold mb-2">
+                {completionStats.completed} / {completionStats.total}
               </p>
-              <div className="flex items-center gap-2 text-body text-[var(--text-secondary)]">
+              <div className="flex items-center justify-center lg:justify-start gap-2 text-body text-[var(--text-secondary)]">
                 {completionStats.total === completionStats.completed ? (
                   <>
                     <PartyPopper className="w-5 h-5 text-success" />
-                    <span>All done!</span>
+                    <span>All habits complete</span>
                   </>
                 ) : completionStats.completed === 0 ? (
-                  <span>Let's get started!</span>
+                  <span>Start your first task to build momentum</span>
                 ) : (
-                  <span>Keep going!</span>
+                  <span>{completionStats.total - completionStats.completed} tasks remaining</span>
                 )}
               </div>
             </div>
             <div className="flex-shrink-0">
-              <ProgressRing percentage={completionStats.percentage} size={100} />
+              <ProgressRing
+                percentage={completionStats.percentage}
+                size={220}
+                strokeWidth={12}
+                className="animate-ring-pulse"
+              />
             </div>
           </div>
         </Card>
+      )}
+
+      {/* Weekly Overview */}
+      {habits.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <WeeklyCompletionChart habits={habits} entries={entries} />
+          <ProgressRingGrid habits={habits} entries={entries} />
+        </div>
       )}
 
       {/* Habits List */}

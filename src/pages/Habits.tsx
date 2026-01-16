@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useHabitStore } from '../stores'
-import { Habit, CadenceType, WeeklyCadence, DurationUnit, Priority } from '../types'
+import { Habit, CadenceType, WeeklyCadence, DurationUnit, Priority, HabitCategory, HabitStatus } from '../types'
 import HabitForm from '../components/HabitForm'
 import HabitList from '../components/HabitList'
 import Button from '../components/Button'
@@ -24,6 +24,10 @@ export default function Habits() {
 
   const handleSubmit = (data: {
     name: string
+    category: HabitCategory
+    status: HabitStatus
+    targetFrequency?: number
+    targetDuration?: number
     cadence: CadenceType
     cadenceConfig: WeeklyCadence
     duration: { value: number; unit: DurationUnit }
@@ -71,7 +75,12 @@ export default function Habits() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-        <h2 className="text-h1 font-bold">Habits</h2>
+        <div>
+          <p className="text-small text-[var(--text-secondary)] uppercase tracking-[0.2em]">
+            Task Library
+          </p>
+          <h2 className="text-h1 font-bold">Habits</h2>
+        </div>
         {!showForm && (
           <Button variant="primary" onClick={() => setShowForm(true)}>
             + New Habit

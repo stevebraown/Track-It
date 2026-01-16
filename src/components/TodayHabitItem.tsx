@@ -1,26 +1,15 @@
-import { Habit, Priority, HabitEntry } from '../types'
+import { Habit, HabitEntry } from '../types'
 import { calculateStreak } from '../utils/statistics'
 import Card from './Card'
 import StreakBadge from './StreakBadge'
-import { Clock } from 'lucide-react'
+import { Clock, Play, Pause } from 'lucide-react'
+import { CATEGORY_COLORS, getCategoryIcon, getCategoryLabel } from '../utils/categories'
 
 interface TodayHabitItemProps {
   habit: Habit
   completed: boolean
   entries: HabitEntry[]
   onToggle: (habitId: string, completed: boolean) => void
-}
-
-const PRIORITY_COLORS: Record<Priority, string> = {
-  low: 'border-l-gray-400',
-  medium: 'border-l-primary',
-  high: 'border-l-destructive',
-}
-
-const PRIORITY_BG: Record<Priority, string> = {
-  low: 'bg-gray-100 dark:bg-gray-800',
-  medium: 'bg-primary-light',
-  high: 'bg-destructive-light',
 }
 
 export default function TodayHabitItem({
@@ -35,49 +24,31 @@ export default function TodayHabitItem({
 
   // Calculate streak for this habit
   const currentStreak = calculateStreak(habit, entries)
+  const durationLabel = `${habit.duration.value} ${habit.duration.unit}`
+  const categoryColor = CATEGORY_COLORS[habit.category]
 
   return (
     <Card
-      className={`border-l-4 ${PRIORITY_COLORS[habit.priority]} transition-all duration-200 ${
+      className={`transition-all duration-300 ${
         completed
-          ? 'opacity-60 bg-[var(--bg-surface)]'
-          : `hover:shadow-md ${PRIORITY_BG[habit.priority]}`
+          ? 'opacity-70 bg-[var(--bg-surface)]'
+          : 'hover:shadow-[var(--card-shadow-hover)]'
       }`}
     >
-      <div className="flex items-start gap-4">
-        {/* Larger, more tappable checkbox */}
-        <button
-          onClick={handleToggle}
-          className={`mt-0.5 flex-shrink-0 w-7 h-7 rounded-8 border-2 flex items-center justify-center transition-all duration-200 transform active:scale-95 ${
-            completed
-              ? 'bg-success border-success shadow-sm'
-              : 'border-[var(--border-color)] hover:border-primary hover:bg-primary-light'
-          }`}
-          aria-label={completed ? 'Mark as incomplete' : 'Mark as complete'}
+      <div className="flex items-center gap-4">
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center text-white"
+          style={{ backgroundColor: categoryColor }}
         >
-          {completed && (
-            <svg
-              className="w-5 h-5 text-white animate-checkmark"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          )}
-        </button>
+          <span className="text-sm font-semibold">{getCategoryIcon(habit.category)}</span>
+        </div>
 
         {/* Habit info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <h3
-                className={`text-h3 font-semibold break-words transition-all ${
+                className={`text-h3 font-semibold truncate transition-all ${
                   completed
                     ? 'line-through text-[var(--text-secondary)]'
                     : 'text-[var(--text-primary)]'
@@ -85,47 +56,47 @@ export default function TodayHabitItem({
               >
                 {habit.name}
               </h3>
-              {habit.description && (
-                <p className="text-small text-[var(--text-secondary)] mt-1.5 break-words">
-                  {habit.description}
-                </p>
-              )}
-            </div>
-
-            {/* Streak badge - only show if streak > 0 */}
-            {currentStreak > 0 && (
-              <div className="flex-shrink-0">
-                <StreakBadge currentStreak={currentStreak} size="small" />
+              <div className="flex items-center gap-3 mt-1 text-small text-[var(--text-secondary)]">
+                <span className="uppercase tracking-[0.15em]">
+                  {getCategoryLabel(habit.category)}
+                </span>
+                <span className="uppercase tracking-[0.15em]">
+                  {habit.cadence === 'daily' ? 'Daily' : 'Weekly'}
+                </span>
+                {habit.reminderTime && (
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    {habit.reminderTime}
+                  </span>
+                )}
+                {currentStreak > 0 && <StreakBadge currentStreak={currentStreak} size="small" />}
               </div>
-            )}
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-body font-semibold">{durationLabel}</p>
+                <p className="text-small text-[var(--text-secondary)]">
+                  {completed ? 'Done' : 'Planned'}
+                </p>
+              </div>
+              <button
+                onClick={handleToggle}
+                className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+                  completed
+                    ? 'bg-success border-success text-white'
+                    : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--accent)] hover:border-[var(--accent)]'
+                }`}
+                aria-label={completed ? 'Mark as incomplete' : 'Mark as complete'}
+              >
+                {completed ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
-
-          {/* Priority and cadence info */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className={`px-2 py-1 rounded-4 text-small font-medium flex-shrink-0 ${
-                completed
-                  ? 'bg-gray-400 text-white'
-                  : habit.priority === 'high'
-                  ? 'bg-destructive text-white'
-                  : habit.priority === 'medium'
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-500 text-white'
-              }`}
-            >
-              {habit.priority === 'high'
-                ? 'High'
-                : habit.priority === 'medium'
-                ? 'Medium'
-                : 'Low'}
-            </span>
-            {habit.reminderTime && (
-              <span className="text-small text-[var(--text-secondary)] flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                {habit.reminderTime}
-              </span>
-            )}
-          </div>
+          {habit.description && (
+            <p className="text-small text-[var(--text-secondary)] mt-3">
+              {habit.description}
+            </p>
+          )}
         </div>
       </div>
     </Card>

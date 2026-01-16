@@ -76,7 +76,12 @@ export default function Settings() {
 
   return (
     <div>
-      <h2 className="text-h1 font-bold mb-8">Settings</h2>
+      <div className="mb-8">
+        <p className="text-small text-[var(--text-secondary)] uppercase tracking-[0.2em]">
+          Preferences
+        </p>
+        <h2 className="text-h1 font-bold">Settings</h2>
+      </div>
 
       {/* Install Prompt */}
       <InstallPrompt />
